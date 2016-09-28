@@ -9,22 +9,22 @@
 using namespace std;
 void DeleteAllFiles(char* folderPath)
 {
- char fileFound[256];
- WIN32_FIND_DATA info;
- HANDLE hp;
- sprintf(fileFound, "%s\\*.*", folderPath);
- hp = FindFirstFile(fileFound, &info);
- do
+    char fileFound[256];
+    WIN32_FIND_DATA info;
+    HANDLE hp;
+    sprintf(fileFound, "%s\\*.*", folderPath);
+    hp = FindFirstFile(fileFound, &info);
+    do
     {
-       sprintf(fileFound,"%s\\%s", folderPath, info.cFileName);
-       DeleteFile(fileFound);
-
-    }while(FindNextFile(hp, &info));
- FindClose(hp);
+        sprintf(fileFound,"%s\\%s", folderPath, info.cFileName);
+        DeleteFile(fileFound);
+    }
+    while(FindNextFile(hp, &info));
+    FindClose(hp);
 }
 inline bool exists_test (const std::string& name) {
-  struct stat buffer;
-  return (stat (name.c_str(), &buffer) == 0);
+    struct stat buffer;
+    return (stat (name.c_str(), &buffer) == 0);
 }
 void copy_file( const char* srce_file, const char* dest_file )
 {
@@ -39,6 +39,18 @@ string to_string(T obj)
     ss << obj;
     return ss.str();
 }
+
+string dot = ".";
+string po_kropce;
+string poczatek;
+
+void SplitFilename (const string& str)
+{
+    size_t found = str.find_last_of(".");
+    poczatek = str.substr(0,found);
+    po_kropce=str.substr (found+1);
+    dot+=po_kropce;
+}
 int main ()
  {
     DeleteAllFiles("OUT");
@@ -51,22 +63,18 @@ int main ()
     {
         while ( getline (myfile,plik,'\t') )
         {
-
+            dot = ".";
+            SplitFilename(plik);
             string inS="IN/"+plik;
             const char *in = inS.c_str();
-
-            string plik_bez=plik;
-            size_t pos = plik.find(".");
-            string dot = plik.substr (pos);
-            plik_bez.replace(plik_bez.find(dot),dot.length(),"");
-            string autS = "OUT/"+plik_bez;
+            string autS = "OUT/"+poczatek;
             getline (myfile,iloscS,'\n');
             ilosc = atoi(iloscS.c_str());
             int licznik = 1;
             string liczniks;
             for(int i= 0;ilosc>i;i++)
             {
-                autS = "OUT/"+plik_bez;
+                autS = "OUT/"+poczatek;
                 autS+="_";
                 liczniks = to_string(licznik);
                 autS+=liczniks;
